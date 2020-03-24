@@ -1,18 +1,93 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SkalProj_Datastrukturer_Minne
 {
     class Program
     {
         /// <summary>
+        /// Teori och fakta.
+        /// -------------------------
+        /// 1: Stacken kan ses som systemet som hanterar metoder och dess lokala variablar.
+        ///    När ett program körs så kan det bara utföra en sak åt gången,
+        ///    och stacken ser till att hålla koll på vilka metoder och variablar som kommer behöva minne och hur länge.
+        ///    Stacken körs via en LIFO ordning därför om vi har ett exempel som "DoManyThings(DoOneThing())".
+        ///    Så kommer DoOneThing() köras först för att den var sist in och när den körts klart,
+        ///    så kommer allt minne allokerat till den och dess variablar frigöras.
+        ///  
+        ///    Om man kollar på klass exemplet nedan. Så kommer alla variablar deklarerade bara inom klassen
+        ///    hamna i heapen. Programet kan inte veta när heap värden ska sluta ha allokerat minne,
+        ///    då deras värden kan komma att användas närsomhelst av vilken metod som helst inom klassen.
+        ///    Vilket gör att man själv måste hålla koll på när man ska sluta allokera minne till heap variablar,
+        ///    och skicka dem för garabage collection.
+        ///  
+        ///    Om man använder exemplet nedan igen, Så kan man se att variablen "z" finns bara inom metoden. 
+        ///    Tack vare stacken så kommer "z" bara ha allokerat minne så länge som metoden "d" körs,
+        ///    när den är klar kommer stacken att frigöra dess minne och allokera det igen om metoden körs senare.
+        ///  
+        /// class Rand
+        /// {
+        ///     int g;
+        ///     
+        ///     void d()
+        ///     {
+        ///         int z;
+        ///     }
+        /// }
+        /// 
+        /// 2: Value Types inehåller bara värden och ingen referens till minnet.
+        ///    Om man tar exemplet nedan så kommer "z" bli värt 3 när det blir tilldelat "g" värde.
+        ///    "z" värde kommer inte förändras när vi förändrar "g" värde igen,
+        ///    då värdes typen "int" bara håller i en siffra och inte någon referens till någon plats i minnet.
+        ///     
+        ///     int g=3;
+        ///     int z=g;
+        ///         g=4;
+        /// 
+        ///     Reference types håller däremot referenser till platser i minnet.
+        ///     Vilket gör att om vi skulle ta samma exempel som ovan fast med "string",
+        ///     så skulle "z" värde förändras när "g" förändras.
+        ///     Då man inte tilldelar värden med reference types, utan man tilldelar minnes platser/adresser.
+        ///     
+        /// 3:  I den första metoden så är alla variablar value types, därav när man assignar "y" till "x",
+        ///     Så får "y" bara "x" värde.
+        ///     Medans i den andra metoden så är varaiblarna refernce types. När man assignar "y" til "x",
+        ///     Så ger man "y" samma adress som "x" och om man då ändrar värdet på någon av dem så ändras då bådas värde.
+        /// ------------------------
+        /// 
+        /// Datastrukturer och minneseffektivitet
+        /// -----------------------
+        /// 
+        /// 2. Listans kapacitet ökar när man överskrider den nuvarande kapaciteten.
+        /// 
+        /// 3. Kapaciteten fördubblas.
+        /// 
+        /// 4. För att när en lista utökar sin kapacitet så skapar den en ny lista som den lägger alla element i,
+        ///    och om den gjorde det i takt med att man la till elment så skulle det inte vara mineseffektivt.
+        ///    Därför fördubblas listans kapacitet så att det finns lite extra utrymme,
+        ///    så att den inte behöver utföra operationen direkt igen.
+        ///    
+        /// 5. Nej kapacitetn minskar inte.
+        /// 
+        /// 6. När man inte vill att listan ska överskrida en särskilld längd,
+        ///    då kan man förhindra att listan behöver utöka sin kapacitet.
+        ///    Eller om man vet hur många element som listan kommer inehålla,
+        ///    och att elementen inte kommer minska eller öka i mängd.
+        ///--------------
+        /// 
+        /// </summary>
+
+        /// <summary>
         /// The main method, vill handle the menues for the program
         /// </summary>
         /// <param name="args"></param>
         static void Main()
         {
-            
+           
             while (true)
             {
+                Console.Clear();
                 Console.WriteLine("Please navigate through the menu by inputting the number \n(1, 2, 3 ,4, 0) of your choice"
                     + "\n1. Examine a List"
                     + "\n2. Examine a Queue"
@@ -71,13 +146,48 @@ namespace SkalProj_Datastrukturer_Minne
              * As a default case, tell them to use only + or -
              * Below you can see some inspirational code to begin working.
             */
+            Console.Clear();
+            List<string> theList = new List<string>();
+            
+            while (true)
+            {
+                
+                Console.WriteLine("Enter '+Name' to add a name to the list.\n" +
+                    "Enter '-Name' to remove name from list.\n" +
+                    "Enter 0 to return to main menu.");
 
-            //List<string> theList = new List<string>();
-            //string input = Console.ReadLine();
-            //char nav = input[0];
-            //string value = input.substring(1);
+                foreach (var item in theList)
+                {
+                    Console.WriteLine(item);
+                }
 
-            //switch(nav){...}
+                Console.WriteLine($"List count: {theList.Count}\n" +
+                    $"List capacity {theList.Capacity}");
+                string input = Console.ReadLine();
+
+                char nav = input.Length > 0 ? input[0] : 'n';
+                string value = input.Length > 1 ? input.Substring(1) : "fail";
+
+                nav = value == "fail" && nav != '0' ? 'n' : nav;
+
+                switch (nav)
+                {
+                    case '+':
+                        Console.Clear();
+                        theList.Add(value);
+                        break;
+                    case '-':
+                        Console.Clear();
+                        theList.Remove(value);
+                        break;
+                    case '0':
+                        return;
+                    default:
+                        Console.WriteLine("Use only + or - to add names.");
+                        break;
+                }
+
+            }
         }
 
         /// <summary>
