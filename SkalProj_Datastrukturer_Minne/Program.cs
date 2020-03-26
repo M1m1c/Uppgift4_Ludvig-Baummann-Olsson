@@ -58,6 +58,7 @@ namespace SkalProj_Datastrukturer_Minne
         /// 
         /// Datastrukturer och minneseffektivitet
         /// -----------------------
+        /// övning 1
         /// 
         /// 2. Listans kapacitet ökar när man överskrider den nuvarande kapaciteten.
         /// 
@@ -76,6 +77,11 @@ namespace SkalProj_Datastrukturer_Minne
         ///    och att elementen inte kommer minska eller öka i mängd.
         ///--------------
         /// 
+        /// övning 2
+        /// 1. Stina blir expedierad och lämnar kön. Olle blir expedierad och lämnar kön
+        /// 
+        /// övning 3
+        /// 1. För då får den som ställde sig sist i kön bli expedierad först.
         /// </summary>
 
         /// <summary>
@@ -156,18 +162,14 @@ namespace SkalProj_Datastrukturer_Minne
                     "Enter '-Name' to remove name from list.\n" +
                     "Enter 0 to return to main menu.");
 
-                foreach (var item in theList)
-                {
-                    Console.WriteLine(item);
-                }
+                WriteEachItemInCollection(theList);
 
                 Console.WriteLine($"List count: {theList.Count}\n" +
                     $"List capacity {theList.Capacity}");
-                string input = Console.ReadLine();
 
+                string input = Console.ReadLine();
                 char nav = input.Length > 0 ? input[0] : 'n';
                 string value = input.Length > 1 ? input.Substring(1) : "fail";
-
                 nav = value == "fail" && nav != '0' ? 'n' : nav;
 
                 switch (nav)
@@ -200,6 +202,36 @@ namespace SkalProj_Datastrukturer_Minne
              * Create a switch with cases to enqueue items or dequeue items
              * Make sure to look at the queue after Enqueueing and Dequeueing to see how it behaves
             */
+            
+            Queue<string> theQueue = new Queue<string>();        
+            List<String> names = new List<string> {"Kalle","Greta","Stina","Olle","Erik","Johan","Lena","Jenny" };
+            Random rand = new Random();
+
+            while (true)
+            {
+                Console.Clear();
+
+                Console.WriteLine("Enter '+' to add a name to the queue.\n" +
+                   "Enter '-' to dequeue the first nam in the queue.\n" +
+                   "Enter 0 to return to main menu.");
+
+                WriteEachItemInCollection(theQueue);
+
+                string input = Console.ReadLine();
+                char nav = input.Length > 0 ? input[0] : 'n';
+
+                switch (nav)
+                {
+                    case '+':
+                        theQueue.Enqueue(names[rand.Next(0, names.Count)]);
+                        break;
+                    case '-':
+                        if (theQueue.Count > 0) theQueue.Dequeue();
+                        break;
+                    case '0':
+                        return;
+                }
+            }
         }
 
         /// <summary>
@@ -212,6 +244,36 @@ namespace SkalProj_Datastrukturer_Minne
              * Create a switch with cases to push or pop items
              * Make sure to look at the stack after pushing and and poping to see how it behaves
             */
+
+            Stack<char> theStack = new Stack<char>();
+            Console.Clear();
+
+            while (true)
+            {
+                Console.WriteLine("Enter a string to reverse it\n" +
+                   "Enter 0 to return to main menu.");           
+
+                string input = Console.ReadLine();
+                char nav = input.Length > 0 ? input[0] : 'n';
+
+                foreach (var item in input)
+                {
+                    theStack.Push(item);
+                }
+
+                switch (nav)
+                {
+                    default:
+                        do
+                        {
+                            Console.Write(theStack.Pop());
+                        } while (theStack.Count>0);
+                        Console.Write("\n");
+                        break;
+                    case '0':
+                        return;
+                }
+            }
         }
 
         static void CheckParanthesis()
@@ -221,6 +283,63 @@ namespace SkalProj_Datastrukturer_Minne
              * Example of correct: (()), {}, [({})],  List<int> list = new List<int>() { 1, 2, 3, 4 };
              * Example of incorrect: (()]), [), {[()}],  List<int> list = new List<int>() { 1, 2, 3, 4 );
              */
+
+            //TODO add list, queue or stack
+            List<char> parenthisisCollection = new List<char>();
+            while (true)
+            {
+                string input = Console.ReadLine();
+                char nav = input.Length > 0 ? input[0] : 'n';
+                if (nav == 0) return;
+
+                //TODO turn this for each switch case into a function that takes a list and a func
+                //RunFunctionBasedOnParentheis(input,parenthisisCollection, AddToCollection);
+                RunFunctionBasedOnParentheis<IEnumerable<char>>(input, parenthisisCollection, AddToCollection);
+                //TODO go trhough collection
+
+
+            }
+
+
+        }
+        private static void WriteEachItemInCollection<T>(IEnumerable<T> theCollection)
+        {
+            foreach (var item in theCollection)
+            {
+                Console.WriteLine(item);
+            }
+        }
+        static void RunFunctionBasedOnParentheis<T>(IEnumerable<char> collectionToGoThrough, 
+            IEnumerable<char> collectionToAffect,
+            Action<T,char> functionToRun)
+        {
+            foreach (var item in collectionToGoThrough)
+            {
+                switch (item)
+                {
+                    case '(':
+                        //TODO add to collection
+                        break;
+                    case ')':
+                        //TODO add to collection
+                        break;
+                    case '{':
+                        //TODO add to collection
+                        break;
+                    case '}':
+                        //TODO add to collection
+                        break;
+                    case '[':
+                        //TODO add to collection
+                        break;
+                    case ']':
+                        //TODO add to collection
+                        break;
+                }
+            }
+        }
+        static void AddToCollection(IEnumerable<char> collection,char symbol)
+        {
 
         }
 
