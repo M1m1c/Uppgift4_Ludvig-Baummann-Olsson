@@ -283,64 +283,97 @@ namespace SkalProj_Datastrukturer_Minne
              * Example of correct: (()), {}, [({})],  List<int> list = new List<int>() { 1, 2, 3, 4 };
              * Example of incorrect: (()]), [), {[()}],  List<int> list = new List<int>() { 1, 2, 3, 4 );
              */
+            List<char> wantedSymbols = new List<char> { '(', ')', '{', '}', '[', ']' };
+            Console.Clear();
+            Console.WriteLine("Type sentence with enclosed brackets");
 
-            //TODO add list, queue or stack
-            List<char> parenthisisCollection = new List<char>();
             while (true)
             {
+                Dictionary<char, int> paranthesisAmounts = new Dictionary<char, int> 
+                {
+                    {'(',0},
+                    {')',0},
+                    {'{',0},
+                    {'}',0},
+                    {'[',0},
+                    {']',0},
+                 };
+
                 string input = Console.ReadLine();
                 char nav = input.Length > 0 ? input[0] : 'n';
-                if (nav == 0) return;
 
-                //TODO turn this for each switch case into a function that takes a list and a func
-                //RunFunctionBasedOnParentheis(input,parenthisisCollection, AddToCollection);
-                RunFunctionBasedOnParentheis<IEnumerable<char>>(input, parenthisisCollection, AddToCollection);
-                //TODO go trhough collection
+                if (nav == '0' && input.Length < 2) return;
 
+                foreach (var symbol in wantedSymbols)
+                {
+                    paranthesisAmounts[symbol] += CountSymbols(input, symbol);
+                }
 
+                if (DoesAllPairsMatch(paranthesisAmounts, wantedSymbols))
+                {
+                    Console.WriteLine("All bracket pairs matched, string had correct formating");
+                }
+                else
+                {
+                    Console.WriteLine("One or more brackets did not have a matching opposite, string had incorrect formatting");
+                }  
             }
-
-
         }
+     
+        private static int CountSymbols(string input, char symbolToLookFor)
+        {
+            int retValue = 0;
+            foreach (var character in input)
+            {
+                if (character == symbolToLookFor)
+                {
+                    retValue++;
+                }
+            }
+            return retValue;
+        }
+
+        private static bool DoesAllPairsMatch(Dictionary<char, int> paranthesisAmount, List<char> wantedSymbols)
+        {
+            bool allPairingsCorrect = false;
+            for (int i = 0; i < wantedSymbols.Count; i += 2)
+            {
+                var openingBrackets = paranthesisAmount[wantedSymbols[i]];
+                var closingBrackets = paranthesisAmount[wantedSymbols[i + 1]];
+
+                if (openingBrackets != 0 && closingBrackets != 0)
+                {
+                    if (openingBrackets % closingBrackets == 0)
+                    {
+                        //correct pairing
+                        allPairingsCorrect = true;
+                    }
+                    else
+                    {
+                        //not correct pairing
+                        allPairingsCorrect = false;
+                        break;
+                    }
+                }
+                else if (
+                    (openingBrackets != 0 && closingBrackets == 0) ||
+                    (openingBrackets == 0 && closingBrackets != 0)
+                    )
+                {
+                    //Missing Opening or closing bracket
+                    allPairingsCorrect = false;
+                    break;
+                }
+            }
+            return allPairingsCorrect;
+        }
+
         private static void WriteEachItemInCollection<T>(IEnumerable<T> theCollection)
         {
             foreach (var item in theCollection)
             {
                 Console.WriteLine(item);
             }
-        }
-        static void RunFunctionBasedOnParentheis<T>(IEnumerable<char> collectionToGoThrough, 
-            IEnumerable<char> collectionToAffect,
-            Action<T,char> functionToRun)
-        {
-            foreach (var item in collectionToGoThrough)
-            {
-                switch (item)
-                {
-                    case '(':
-                        //TODO add to collection
-                        break;
-                    case ')':
-                        //TODO add to collection
-                        break;
-                    case '{':
-                        //TODO add to collection
-                        break;
-                    case '}':
-                        //TODO add to collection
-                        break;
-                    case '[':
-                        //TODO add to collection
-                        break;
-                    case ']':
-                        //TODO add to collection
-                        break;
-                }
-            }
-        }
-        static void AddToCollection(IEnumerable<char> collection,char symbol)
-        {
-
         }
 
     }
