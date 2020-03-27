@@ -87,6 +87,7 @@ namespace SkalProj_Datastrukturer_Minne
         /// sista fågan:
         /// Jag tror att itteration är mer effektivt, då en itterativ metod bara behöver anropas en gång och gå igenom sin loop,
         /// medans en rekursiv metod anropar sig själv vid varje steg tills den nåt sitt mål.
+        /// 
         /// </summary>
 
         /// <summary>
@@ -298,96 +299,119 @@ namespace SkalProj_Datastrukturer_Minne
             }
         }
 
+       
+
         static void CheckParanthesis()
         {
-            /*
-             * Use this method to check if the paranthesis in a string is Correct or incorrect.
-             * Example of correct: (()), {}, [({})],  List<int> list = new List<int>() { 1, 2, 3, 4 };
-             * Example of incorrect: (()]), [), {[()}],  List<int> list = new List<int>() { 1, 2, 3, 4 );
-             */
             List<char> wantedSymbols = new List<char> { '(', ')', '{', '}', '[', ']' };
+            List<char> wantedOpenings = new List<char> { '(', '[', '{' };
+
             Console.Clear();
             Console.WriteLine("Type sentence with enclosed brackets");
 
             while (true)
             {
-                Dictionary<char, int> paranthesisAmounts = new Dictionary<char, int> 
-                {
-                    {'(',0},
-                    {')',0},
-                    {'{',0},
-                    {'}',0},
-                    {'[',0},
-                    {']',0},
-                 };
+                List<char> foundSymbols = new List<char>();
 
                 string input = Console.ReadLine();
                 char nav = input.Length > 0 ? input[0] : 'n';
 
                 if (nav == '0' && input.Length < 2) return;
 
-                foreach (var symbol in wantedSymbols)
+                foreach (var character in input)
                 {
-                    paranthesisAmounts[symbol] += CountSymbols(input, symbol);
+                    foreach (var symbol in wantedSymbols)
+                    {
+                        if (character==symbol)
+                        {
+                            foundSymbols.Add(character);
+                        }                      
+                    }
                 }
 
-                if (DoesAllPairsMatch(paranthesisAmounts, wantedSymbols))
+                if (foundSymbols.Count == 0) 
+                {
+                    Console.WriteLine("String contained no brackets, type a string wiht brackets");
+                }
+                else if (DoesAllPairsMatch(wantedOpenings, foundSymbols))
                 {
                     Console.WriteLine("All bracket pairs matched, string had correct formating");
                 }
                 else
                 {
-                    Console.WriteLine("One or more brackets did not have a matching opposite, string had incorrect formatting");
-                }  
-            }
-        }
-     
-        private static int CountSymbols(string input, char symbolToLookFor)
-        {
-            int retValue = 0;
-            foreach (var character in input)
-            {
-                if (character == symbolToLookFor)
-                {
-                    retValue++;
+                    Console.WriteLine("One or more brackets did not have a matching opposite on the correct side," +
+                                      " string had incorrect formatting");
                 }
             }
-            return retValue;
         }
 
-        private static bool DoesAllPairsMatch(Dictionary<char, int> paranthesisAmount, List<char> wantedSymbols)
+        private static bool DoesAllPairsMatch(List<char> wantedOpenings, List<char> foundSymbols)
         {
-            bool allPairingsCorrect = false;
-            for (int i = 0; i < wantedSymbols.Count; i += 2)
+            bool retFlag = false;         
+            int openingIndex = 0;
+            int closingIndex = 0;
+                
+            foreach (var item in wantedOpenings)
             {
-                var openingBrackets = paranthesisAmount[wantedSymbols[i]];
-                var closingBrackets = paranthesisAmount[wantedSymbols[i + 1]];
+                openingIndex = FindBracket(foundSymbols, item);
+                closingIndex = FindClosingIndex(foundSymbols, item);
 
-                if (openingBrackets != 0 && closingBrackets != 0)
+                if ((openingIndex == -1 && closingIndex > -1) || (openingIndex > -1 && closingIndex == -1))
                 {
-                    if (openingBrackets % closingBrackets == 0)
-                    {
-                        //correct pairing
-                        allPairingsCorrect = true;
-                    }
-                    else
-                    {
-                        //not correct pairing
-                        allPairingsCorrect = false;
-                        break;
-                    }
-                }
-                else if (
-                    (openingBrackets != 0 && closingBrackets == 0) ||
-                    (openingBrackets == 0 && closingBrackets != 0)
-                    )
-                {
-                    //Missing Opening or closing bracket
-                    allPairingsCorrect = false;
+                    //incorect formating
                     break;
                 }
+                else if (openingIndex > closingIndex)
+                {
+                    //incorect formating
+                    break;
+                }
+                else if (openingIndex < closingIndex)
+                {
+                    //found a pair
+                    foundSymbols.RemoveAt(closingIndex);
+                    foundSymbols.RemoveAt(openingIndex);
+                }
             }
-            return allPairingsCorrect;
+
+            if (foundSymbols.Count == 0)
+            {
+                retFlag = true;
+            }
+
+            return retFlag;
+        }
+
+        private static int FindClosingIndex(List<char> foundSymbols, char item)
+        {
+            int retInt = -1;
+            switch (item)
+            {
+                case '(':
+                    retInt= FindBracket(foundSymbols, ')');
+                    break;
+                case '[':
+                    retInt = FindBracket(foundSymbols, ']');
+                    break;
+                case '{':
+                    retInt = FindBracket(foundSymbols, '}');
+                    break;
+            }
+            return retInt;
+        }
+
+        private  static int FindBracket(List<char> foundSymbols ,char charToLookFor)
+        {
+            int retInt = -1;
+            for (int i = 0; i < foundSymbols.Count; i++)
+            {
+                if (foundSymbols[i]==charToLookFor)
+                {
+                    retInt = i;
+                }
+            }
+            return retInt;
+            
         }
 
         private static void WriteEachItemInCollection<T>(IEnumerable<T> theCollection)
