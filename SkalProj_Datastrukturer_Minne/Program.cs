@@ -98,7 +98,9 @@ namespace SkalProj_Datastrukturer_Minne
                     + "\n1. Examine a List"
                     + "\n2. Examine a Queue"
                     + "\n3. Examine a Stack"
-                    + "\n4. CheckParanthesis"
+                    + "\n4. CheckParanthesis" 
+                    + "\n5. Recursive even"
+                    + "\n6. Recursive Fibonacci"
                     + "\n0. Exit the application");
                 char input = ' '; //Creates the character input to be used with the switch-case below.
                 try
@@ -123,6 +125,12 @@ namespace SkalProj_Datastrukturer_Minne
                         break;
                     case '4':
                         CheckParanthesis();
+                        break;
+                    case '5':
+                        CheckRecurssionEven();
+                        break;
+                    case '6':
+                        CheckRecurssionFibonacci();
                         break;
                     /*
                      * Extend the menu to include the recursive 
@@ -375,7 +383,64 @@ namespace SkalProj_Datastrukturer_Minne
                 Console.WriteLine(item);
             }
         }
+       
+        private static void CheckRecurssionEven()
+        {
+            Console.WriteLine("Enter a number to get the Nth even number");
+            while (true)
+            {
+                string input = Console.ReadLine();
+                int n = 0;
+                int.TryParse(input, out n);
+                char nav = input.Length > 0 ? input[0] : 'n';
+                if (nav == '0' && input.Length < 2) return;
 
+
+                Console.WriteLine(RecursiveEven(n));
+
+
+            }
+        }
+
+        private static int RecursiveEven(int n)
+        {
+            if (n == 0) return 0;
+            return (RecursiveEven(n - 1) + 2);
+        }
+
+        private static void CheckRecurssionFibonacci()
+        {
+            Console.WriteLine("Enter a number to get the Nth number of the fibonacci sequence");
+            while (true)
+            {
+                string input = Console.ReadLine();
+                int n = 0;
+                int.TryParse(input, out n);
+                char nav = input.Length > 0 ? input[0] : 'n';
+                if (nav == '0' && input.Length < 2) return;
+
+                Console.WriteLine(RecursiveFibonacci(n));
+
+              //  Console.WriteLine(RecursiveEven(n));
+
+
+            }
+        }
+
+        //Måste vara ärlig, jag var tvungen att kolla up det här på nätet, har inte precis hållit på med reccursion tidigare.
+        //Hade hört tallas om fibonaccisekvensen, men visste egentligen ingenting om det.
+        private static int RecursiveFibonacci(int n)
+        {
+            if ( n < 2)
+            {
+                return n;
+            }
+            else
+            {
+                return RecursiveFibonacci(n - 1) + RecursiveFibonacci(n - 2);
+            }
+           
+        }
     }
 }
 
