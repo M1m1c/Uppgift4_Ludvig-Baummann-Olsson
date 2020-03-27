@@ -82,6 +82,11 @@ namespace SkalProj_Datastrukturer_Minne
         /// 
         /// övning 3
         /// 1. För då får den som ställde sig sist i kön bli expedierad först.
+        /// -------------
+        /// rekursion och iteration
+        /// sista fågan:
+        /// Jag tror att itteration är mer effektivt, då en itterativ metod bara behöver anropas en gång och gå igenom sin loop,
+        /// medans en rekursiv metod anropar sig själv vid varje steg tills den nåt sitt mål.
         /// </summary>
 
         /// <summary>
@@ -100,7 +105,9 @@ namespace SkalProj_Datastrukturer_Minne
                     + "\n3. Examine a Stack"
                     + "\n4. CheckParanthesis" 
                     + "\n5. Recursive even"
-                    + "\n6. Recursive Fibonacci"
+                    + "\n6. Recursive Fibonacci" 
+                    +"\n7. Iterative even"
+                    +"\n8. Iterative Fibonacci"
                     + "\n0. Exit the application");
                 char input = ' '; //Creates the character input to be used with the switch-case below.
                 try
@@ -127,11 +134,18 @@ namespace SkalProj_Datastrukturer_Minne
                         CheckParanthesis();
                         break;
                     case '5':
-                        CheckRecurssionEven();
+                        CheckFunction("Enter a number to get the Nth even number", RecursiveEven);
                         break;
                     case '6':
-                        CheckRecurssionFibonacci();
+                        CheckFunction("Enter a number to get the Nth number of the fibonacci sequence", RecursiveFibonacci);
                         break;
+                    case '7':
+                        CheckFunction("Enter a number to get the Nth even number", IterativeEven);
+                        break;
+                    case '8':
+                        CheckFunction("Enter a number to get the Nth fibonacci number", IterativeFibonacci);
+                            break;
+
                     /*
                      * Extend the menu to include the recursive 
                      * and iterative exercises.
@@ -383,10 +397,10 @@ namespace SkalProj_Datastrukturer_Minne
                 Console.WriteLine(item);
             }
         }
-       
-        private static void CheckRecurssionEven()
+
+        private static void CheckFunction(string Instruction, Func<int, int> functionToRun)
         {
-            Console.WriteLine("Enter a number to get the Nth even number");
+            Console.WriteLine(Instruction);
             while (true)
             {
                 string input = Console.ReadLine();
@@ -395,10 +409,7 @@ namespace SkalProj_Datastrukturer_Minne
                 char nav = input.Length > 0 ? input[0] : 'n';
                 if (nav == '0' && input.Length < 2) return;
 
-
-                Console.WriteLine(RecursiveEven(n));
-
-
+                Console.WriteLine(functionToRun(n));
             }
         }
 
@@ -407,26 +418,7 @@ namespace SkalProj_Datastrukturer_Minne
             if (n == 0) return 0;
             return (RecursiveEven(n - 1) + 2);
         }
-
-        private static void CheckRecurssionFibonacci()
-        {
-            Console.WriteLine("Enter a number to get the Nth number of the fibonacci sequence");
-            while (true)
-            {
-                string input = Console.ReadLine();
-                int n = 0;
-                int.TryParse(input, out n);
-                char nav = input.Length > 0 ? input[0] : 'n';
-                if (nav == '0' && input.Length < 2) return;
-
-                Console.WriteLine(RecursiveFibonacci(n));
-
-              //  Console.WriteLine(RecursiveEven(n));
-
-
-            }
-        }
-
+        
         //Måste vara ärlig, jag var tvungen att kolla up det här på nätet, har inte precis hållit på med reccursion tidigare.
         //Hade hört tallas om fibonaccisekvensen, men visste egentligen ingenting om det.
         private static int RecursiveFibonacci(int n)
@@ -438,8 +430,33 @@ namespace SkalProj_Datastrukturer_Minne
             else
             {
                 return RecursiveFibonacci(n - 1) + RecursiveFibonacci(n - 2);
+            }          
+        }
+      
+        private static int IterativeEven(int n)
+        {
+            if (n == 0) return 0;
+
+            int result = 0;
+
+            for (int i = 1; i <= n; i++)
+            {
+                result +=2;
             }
-           
+            return result;
+        }
+
+        private static int IterativeFibonacci(int n)
+        {
+            int result = 0;
+            int a = 1;
+            for (int i = 0; i < n; i++)
+            {
+                int b = result;
+                result = a;
+                a = b + a;
+            }
+            return result;
         }
     }
 }
