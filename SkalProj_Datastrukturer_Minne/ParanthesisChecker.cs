@@ -37,19 +37,16 @@ namespace SkalProj_Datastrukturer_Minne
                             openings.Push('{');
                             break;
                         case ')':
-                            if (openings.Peek() != '(')
-                            { correctFormatting = false; }
-                            else { openings.Pop(); }
+                            correctFormatting = openings.Count > 0 ? (openings.Peek()=='(') : false;
+                            if (correctFormatting) { openings.Pop(); }                       
                             break;
                         case ']':
-                            if (openings.Peek() != '[')
-                            { correctFormatting = false; }
-                            else { openings.Pop(); }
+                            correctFormatting = openings.Count > 0 ? (openings.Peek() == '[') : false;
+                            if (correctFormatting) { openings.Pop(); }
                             break;
                         case '}':
-                            if (openings.Peek() != '{')
-                            { correctFormatting = false; }
-                            else { openings.Pop(); }
+                            correctFormatting = openings.Count > 0 ? (openings.Peek() == '{') : false;
+                            if (correctFormatting) { openings.Pop(); }
                             break;
                     }
                 }
