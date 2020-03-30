@@ -299,121 +299,114 @@ namespace SkalProj_Datastrukturer_Minne
             }
         }
 
-       
-
-        static void CheckParanthesis()
+       static void CheckParanthesis()
         {
-            List<char> wantedSymbols = new List<char> { '(', ')', '{', '}', '[', ']' };
-            List<char> wantedOpenings = new List<char> { '(', '[', '{' };
-
             Console.Clear();
             Console.WriteLine("Type sentence with enclosed brackets");
 
             while (true)
             {
-                List<char> foundSymbols = new List<char>();
-
                 string input = Console.ReadLine();
                 char nav = input.Length > 0 ? input[0] : 'n';
 
                 if (nav == '0' && input.Length < 2) return;
 
-                foreach (var character in input)
+
+                var brackets = FindBrackets(input);
+                if (brackets.Count == 0)
                 {
-                    foreach (var symbol in wantedSymbols)
-                    {
-                        if (character==symbol)
-                        {
-                            foundSymbols.Add(character);
-                        }                      
-                    }
+                    Console.WriteLine("Found no opening bracket or a closing bracket before an opening," +
+                                      " string had incorrect formating");
+                    continue;
                 }
 
-                if (foundSymbols.Count == 0) 
+                //reverse foor loop find the first opening we come across, save that index
+                //go from saved index forward using a normal for loop til we find teh correct closing ande remove both elements.
+                // if we find any closings that are not correct inbetween, return incorrect formatting.
+                //repeat
+                int i = brackets.Count() - 1;
+                while (-1 < i)
                 {
-                    Console.WriteLine("String contained no brackets, type a string wiht brackets");
+                    if (FoundEnclosedBrackets(brackets, i))
+                    {
+                        i = brackets.Count() - 1;
+                        continue;
+                    }
+
+                    i--;
                 }
-                else if (DoesAllPairsMatch(wantedOpenings, foundSymbols))
+
+                if (brackets.Count == 0)
                 {
-                    Console.WriteLine("All bracket pairs matched, string had correct formating");
+                    Console.WriteLine("Correct formatting, all brackets were enclosed");
                 }
                 else
                 {
-                    Console.WriteLine("One or more brackets did not have a matching opposite on the correct side," +
-                                      " string had incorrect formatting");
-                }
+                    Console.WriteLine("Incorrect formatting, string has one or more unenclosed brackets");
+                }          
             }
         }
 
-        private static bool DoesAllPairsMatch(List<char> wantedOpenings, List<char> foundSymbols)
+        private static bool FoundEnclosedBrackets(List<char> brackets, int i)
         {
-            bool retFlag = false;         
-            int openingIndex = 0;
-            int closingIndex = 0;
-                
-            foreach (var item in wantedOpenings)
+            bool retFlag = false;
+            switch (brackets[i])
             {
-                openingIndex = FindBracket(foundSymbols, item);
-                closingIndex = FindClosingIndex(foundSymbols, item);
-
-                if ((openingIndex == -1 && closingIndex > -1) || (openingIndex > -1 && closingIndex == -1))
-                {
-                    //incorect formating
+                case '(':
+                    if (FoundClosing(brackets, i, ')'))
+                    {
+                        retFlag = true;
+                    }
                     break;
-                }
-                else if (openingIndex > closingIndex)
-                {
-                    //incorect formating
+                case '[':
+                    if (FoundClosing(brackets, i, ']'))
+                    {
+                        retFlag = true;
+                    }
                     break;
-                }
-                else if (openingIndex < closingIndex)
-                {
-                    //found a pair
-                    foundSymbols.RemoveAt(closingIndex);
-                    foundSymbols.RemoveAt(openingIndex);
-                }
+                case '{':
+                    if (FoundClosing(brackets, i, '}'))
+                    {
+                        retFlag = true;
+                    }
+                    break;
             }
+            return retFlag;
 
-            if (foundSymbols.Count == 0)
+        }
+
+        private static bool FoundClosing(List<char> brackets, int i, char wantedClosing)
+        {
+            bool retFlag = false;
+            if (i + 1 < brackets.Count)
             {
-                retFlag = true;
-            }
-
+                if (brackets[i+1] == wantedClosing)
+                {
+                    brackets.RemoveAt(i+1);
+                    brackets.RemoveAt(i);
+                    retFlag = true;
+                }
+            }           
             return retFlag;
         }
 
-        private static int FindClosingIndex(List<char> foundSymbols, char item)
+        private static List<char> FindBrackets(string input)
         {
-            int retInt = -1;
-            switch (item)
+            List<char> temp = new List<char>();
+            foreach (var item in input)
             {
-                case '(':
-                    retInt= FindBracket(foundSymbols, ')');
-                    break;
-                case '[':
-                    retInt = FindBracket(foundSymbols, ']');
-                    break;
-                case '{':
-                    retInt = FindBracket(foundSymbols, '}');
-                    break;
-            }
-            return retInt;
-        }
-
-        private  static int FindBracket(List<char> foundSymbols ,char charToLookFor)
-        {
-            int retInt = -1;
-            for (int i = 0; i < foundSymbols.Count; i++)
-            {
-                if (foundSymbols[i]==charToLookFor)
+                if (temp.Count==0 && (item == ')' || item == ']' || item == '}'))
                 {
-                    retInt = i;
+                    break;
+                }
+                else if (item == '(' || item == '[' || item == '{' || item == ')' || item == ']' || item == '}')
+                {
+                    temp.Add(item);
                 }
             }
-            return retInt;
-            
+            return temp;
         }
-
+        
         private static void WriteEachItemInCollection<T>(IEnumerable<T> theCollection)
         {
             foreach (var item in theCollection)
